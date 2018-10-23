@@ -7,9 +7,12 @@
 //
 
 import UIKit
-import CoreData
+import RealmSwift
 
 class CategoryViewController: UITableViewController {
+    
+    
+    let realm = try! Realm()
     
     var categoryArray = [Category]()
     
@@ -62,11 +65,15 @@ class CategoryViewController: UITableViewController {
     
         //MARK: - Datasource manipulation methods
     
-    func saveCategories(){
+    func save(categoty: Category){
         
         do {
             
-            try context.save()
+            try realm.write{
+                
+                realm.add(categoty)
+                
+            }
             
         } catch {
             
@@ -80,13 +87,13 @@ class CategoryViewController: UITableViewController {
     
     func loadCategories(){
 
-        let request:NSFetchRequest<Category> = Category.fetchRequest()
-        do{
-            categoryArray = try context.fetch(request)
-        }catch{
-            print("error fetching:\(error)")
-        }
-        tableView.reloadData()
+//        let request:NSFetchRequest<Category> = Category.fetchRequest()
+//        do{
+//            categoryArray = try context.fetch(request)
+//        }catch{
+//            print("error fetching:\(error)")
+//        }
+//        tableView.reloadData()
     }
     
     
@@ -107,12 +114,12 @@ class CategoryViewController: UITableViewController {
             
 //           let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
 
-           let newCategory = Category(context: self.context)
+           let newCategory = Category()
             newCategory.name = textField.text!
             
             self.categoryArray.append(newCategory)
             
-            self.saveCategories()
+            self.save(categoty: newCategory)
             
         }
         alert.addTextField { (alertTextField) in
